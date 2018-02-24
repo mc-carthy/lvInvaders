@@ -13,12 +13,14 @@ function love.load()
     player.h = 48
     player.speed = 200
     player.bulletSpeed = 100
+    player.fireSfx = love.audio.newSource("assets/sfx/laserShoot.wav", "static")
     player.bullets = {}
     player.initialCooldown = 0.25
     player.cooldown = player.initialCooldown
     
     player.fire = function()
         player.cooldown = player.initialCooldown
+        player.fireSfx:play()
         bullet = {}
         bullet.w = 8
         bullet.h = 8
