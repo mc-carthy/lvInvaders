@@ -7,7 +7,9 @@ function love.load()
     player.speed = 200
     player.bulletSpeed = 100
     player.bullets = {}
-    player.fire = function() 
+    player.cooldown = 0.5
+    player.fire = function()
+        player.cooldown = 0.5
         bullet = {}
         bullet.w = 10
         bullet.h = 10
@@ -18,12 +20,18 @@ function love.load()
 end
 
 function love.update(dt)
+    player.cooldown = player.cooldown - dt
+
     if love.keyboard.isDown('right') then
         player.x = player.x + player.speed * dt
     end
 
     if love.keyboard.isDown('left') then
         player.x = player.x - player.speed * dt
+    end
+
+    if love.keyboard.isDown('space') and player.cooldown < 0 then
+        player.fire()
     end
 
     for i, v in ipairs (player.bullets) do
@@ -47,9 +55,5 @@ end
 function love.keypressed(key)
     if key == 'escape' then
         love.event.quit()
-    end
-
-    if key == 'space' then
-        player.fire()
     end
 end
