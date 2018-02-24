@@ -17,13 +17,15 @@ function checkCollisions(enemies, bullets)
 end
 
 function love.load()
+    gameOver = false
+    backgroundImage = love.graphics.newImage("assets/img/background.png")
     player = {}
     player.x = 0
     player.y = 550
     player.w = 48
     player.h = 48
     player.speed = 200
-    player.bulletSpeed = 100
+    player.bulletSpeed = 200
     player.fireSfx = love.audio.newSource("assets/sfx/laserShoot.wav", "static")
     player.bullets = {}
     player.initialCooldown = 0.25
@@ -39,8 +41,10 @@ function love.load()
         bullet.y = player.y + player.h / 2 - bullet.h / 2
         table.insert(player.bullets, bullet)
     end
-    enemiesController:spawnEnemy(10, 10)
-    enemiesController:spawnEnemy(90, 10)
+    for i = 0, 9 do
+        enemiesController:spawnEnemy(15 + (90 * i), 10)
+        enemiesController:spawnEnemy(15 + (90 * i), 60)
+    end
 end
 
 function love.update(dt)
@@ -67,14 +71,22 @@ function love.update(dt)
 
     for i, v in ipairs (enemiesController.enemies) do
         v.y = v.y + enemy.ySpeed * dt
+        if v.y >= love.graphics.getHeight() then
+            gameOver = true
+        end
     end
 
     checkCollisions(enemiesController.enemies, player.bullets)
 
 end
 
-function love.draw()    
+function love.draw()
     love.graphics.setColor(255, 255, 255, 255)
+    if gameOver then
+        love.graphics.print("Game Over!")
+        return
+    end
+    love.graphics.draw(backgroundImage, 0, 0, 0, 5, 5)
     for _, v in pairs (player.bullets) do
         love.graphics.rectangle('fill', v.x, v.y, v.w, v.h)
     end
@@ -113,7 +125,7 @@ function enemiesController:spawnEnemy(x, y)
     enemy.x = x
     enemy.y = y
     enemy.w = 48
-    enemy.h = 48
+    enemy.h = 40
     enemy.ySpeed = 25
     enemy.bulletSpeed = 100
     enemy.bullets = {}
