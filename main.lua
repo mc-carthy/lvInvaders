@@ -1,4 +1,7 @@
+love.graphics.setDefaultFilter("nearest", "nearest")
 enemy = {}
+enemyImage = love.graphics.newImage("assets/img/spcInvdr.png")
+playerImage = love.graphics.newImage("assets/img/ship.png")
 enemiesController = {}
 enemiesController.enemies = {}
 
@@ -6,8 +9,8 @@ function love.load()
     player = {}
     player.x = 0
     player.y = 550
-    player.w = 80
-    player.h = 20
+    player.w = 48
+    player.h = 48
     player.speed = 200
     player.bulletSpeed = 100
     player.bullets = {}
@@ -17,13 +20,14 @@ function love.load()
     player.fire = function()
         player.cooldown = player.initialCooldown
         bullet = {}
-        bullet.w = 10
-        bullet.h = 10
+        bullet.w = 8
+        bullet.h = 8
         bullet.x = player.x + player.w / 2 - bullet.w / 2
         bullet.y = player.y + player.h / 2 - bullet.h / 2
         table.insert(player.bullets, bullet)
     end
-    enemiesController:spawnEnemy()
+    enemiesController:spawnEnemy(10, 10)
+    enemiesController:spawnEnemy(90, 10)
 end
 
 function love.update(dt)
@@ -47,6 +51,11 @@ function love.update(dt)
         end
         v.y = v.y - player.bulletSpeed * dt
     end
+
+    for i, v in ipairs (enemiesController.enemies) do
+        v.y = v.y + enemy.ySpeed * dt
+    end
+
 end
 
 function love.draw()    
@@ -57,11 +66,13 @@ function love.draw()
 
     love.graphics.setColor(0, 191, 0, 255)
     for _, v in pairs (enemiesController.enemies) do
-        love.graphics.rectangle('fill', v.x, v.y, v.w, v.h)
+        -- love.graphics.rectangle('fill', v.x, v.y, v.w, v.h)
+        love.graphics.draw(enemyImage, v.x, v.y, 0, 4, 4, 0, 0, 0, 0)
     end
 
     love.graphics.setColor(0, 191, 191, 255)
-    love.graphics.rectangle('fill', player.x, player.y, player.w, player.h)
+    -- love.graphics.rectangle('fill', player.x, player.y, player.w, player.h)
+    love.graphics.draw(playerImage, player.x, player.y, 0, 4, 4, 0, 0, 0, 0)
 end
 
 function love.keypressed(key)
@@ -82,13 +93,13 @@ function enemy:fire()
     end
 end
 
-function enemiesController:spawnEnemy()
+function enemiesController:spawnEnemy(x, y)
     enemy = {}
-    enemy.x = 0
-    enemy.y = 0
-    enemy.w = 20
-    enemy.h = 20
-    enemy.speed = 200
+    enemy.x = x
+    enemy.y = y
+    enemy.w = 48
+    enemy.h = 48
+    enemy.ySpeed = 25
     enemy.bulletSpeed = 100
     enemy.bullets = {}
     enemy.initialCooldown = 0.25
