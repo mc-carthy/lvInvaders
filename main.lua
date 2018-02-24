@@ -6,10 +6,11 @@ enemiesController = {}
 enemiesController.enemies = {}
 
 function checkCollisions(enemies, bullets)
-    for _, e in pairs(enemies) do
-        for _, b in pairs(bullets) do
+    for i, e in ipairs(enemies) do
+        for j, b in ipairs(bullets) do
             if b.y <= e.y + e.h and b.x > e.x and b.x < e.x + e.w then
-                print('collision')
+                table.remove(enemies, i)
+                table.remove(bullets, j)
             end
         end
     end
