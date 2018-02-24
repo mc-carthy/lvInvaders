@@ -18,6 +18,7 @@ end
 
 function love.load()
     gameOver = false
+    gameWin = false
     backgroundImage = love.graphics.newImage("assets/img/background.png")
     player = {}
     player.x = 0
@@ -41,9 +42,9 @@ function love.load()
         bullet.y = player.y + player.h / 2 - bullet.h / 2
         table.insert(player.bullets, bullet)
     end
-    for i = 0, 9 do
-        enemiesController:spawnEnemy(15 + (90 * i), 10)
-        enemiesController:spawnEnemy(15 + (90 * i), 60)
+    for i = 1, 9 do
+        enemiesController:spawnEnemy(15 + (90 * (i - 1)), 10)
+        enemiesController:spawnEnemy(15 + (90 * (i - 1)), 60)
     end
 end
 
@@ -69,6 +70,10 @@ function love.update(dt)
         v.y = v.y - player.bulletSpeed * dt
     end
 
+    if #enemiesController.enemies <= 0 then
+        gameWin = true
+    end
+    
     for i, v in ipairs (enemiesController.enemies) do
         v.y = v.y + enemy.ySpeed * dt
         if v.y >= love.graphics.getHeight() then
@@ -86,7 +91,13 @@ function love.draw()
         love.graphics.print("Game Over!")
         return
     end
+
     love.graphics.draw(backgroundImage, 0, 0, 0, 5, 5)
+
+    if gameWin then
+        love.graphics.print("You Won!", 10, 10)
+    end
+
     for _, v in pairs (player.bullets) do
         love.graphics.rectangle('fill', v.x, v.y, v.w, v.h)
     end
