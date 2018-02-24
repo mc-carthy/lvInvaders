@@ -5,6 +5,16 @@ playerImage = love.graphics.newImage("assets/img/ship.png")
 enemiesController = {}
 enemiesController.enemies = {}
 
+function checkCollisions(enemies, bullets)
+    for _, e in pairs(enemies) do
+        for _, b in pairs(bullets) do
+            if b.y <= e.y + e.h and b.x > e.x and b.x < e.x + e.w then
+                print('collision')
+            end
+        end
+    end
+end
+
 function love.load()
     player = {}
     player.x = 0
@@ -57,6 +67,8 @@ function love.update(dt)
     for i, v in ipairs (enemiesController.enemies) do
         v.y = v.y + enemy.ySpeed * dt
     end
+
+    checkCollisions(enemiesController.enemies, player.bullets)
 
 end
 
