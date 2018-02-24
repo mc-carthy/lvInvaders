@@ -9,8 +9,10 @@ function love.load()
     player.bullets = {}
     player.fire = function() 
         bullet = {}
-        bullet.x = player.x + player.w / 2
-        bullet.y = player.y
+        bullet.w = 10
+        bullet.h = 10
+        bullet.x = player.x + player.w / 2 - bullet.w / 2
+        bullet.y = player.y + player.h / 2 - bullet.h / 2
         table.insert(player.bullets, bullet)
     end
 end
@@ -35,7 +37,7 @@ end
 function love.draw()    
     love.graphics.setColor(255, 255, 255, 255)
     for _, v in pairs (player.bullets) do
-        love.graphics.rectangle('fill', v.x, v.y, 10, 10)
+        love.graphics.rectangle('fill', v.x, v.y, v.w, v.h)
     end
 
     love.graphics.setColor(0, 191, 191, 255)
