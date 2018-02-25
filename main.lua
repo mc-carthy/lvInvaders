@@ -4,11 +4,15 @@ enemyImage = love.graphics.newImage("assets/img/spcInvdr.png")
 playerImage = love.graphics.newImage("assets/img/ship.png")
 enemiesController = {}
 enemiesController.enemies = {}
+particleSystem = {}
+particleSystem.list = {}
+particleSystem.img = love.graphics.newImage("assets/img/particle.png")
 
 function checkCollisions(enemies, bullets)
     for i, e in ipairs(enemies) do
         for j, b in ipairs(bullets) do
             if b.y <= e.y + e.h and b.x > e.x and b.x < e.x + e.w then
+                particleSystem:spawn(e.x, e.y)
                 table.remove(enemies, i)
                 table.remove(bullets, j)
             end
@@ -85,6 +89,8 @@ function love.update(dt)
         end
     end
 
+    particleSystem:update(dt)
+
     checkCollisions(enemiesController.enemies, player.bullets)
 
 end
@@ -111,6 +117,8 @@ function love.draw()
         -- love.graphics.rectangle('fill', v.x, v.y, v.w, v.h)
         love.graphics.draw(enemyImage, v.x, v.y, 0, 4, 4, 0, 0, 0, 0)
     end
+
+    particleSystem:draw()
 
     love.graphics.setColor(0, 191, 191, 255)
     -- love.graphics.rectangle('fill', player.x, player.y, player.w, player.h)
@@ -147,4 +155,29 @@ function enemiesController:spawnEnemy(x, y)
     enemy.initialCooldown = 0.25
     enemy.cooldown = enemy.initialCooldown
     table.insert(self.enemies, enemy)
+end
+
+function particleSystem:spawn(x, y)
+    local p = {}
+    p.x = x
+    p.y = y
+    p.ps = love.graphics.newParticleSystem(particleSystem.img, 32)
+    p.ps:setParticleLifetime(1, 2)
+    p.ps:setEmissionRate(5)
+    p.ps:setSizeVariation(1)
+    p.ps:setLinearAcceleration(-40, -40, 40, 40)
+    p.ps:setColors(100, 255, 100, 255, 0, 255, 0, 255)
+    table.insert(particleSystem.list, p)
+end
+
+function particleSystem:update(dt)
+    for _, v in pairs(particleSystem.list) do
+        v.ps:update(dt)
+    end
+end
+
+function particleSystem:draw()
+    for _, v in pairs(particleSystem.list) do
+        love.graphics.draw(v.ps, v.x, v.y)
+    end
 end
